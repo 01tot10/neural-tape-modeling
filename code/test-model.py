@@ -53,7 +53,7 @@ parser.add_argument('--SAVE_AUDIO', action='store_true', default=False)
 parser.add_argument('--MODEL', type=str, default="GRU")
 parser.add_argument('--WEIGHTS',
                     nargs='+',
-                    default="GRU-HS[64]-DS[ReelToReel_Dataset_Mini_CHOWTAPE]")
+                    default="GRU-HS[64]-DS[ReelToReel_Dataset_MiniPulse100_CHOWTAPE]")
 parser.add_argument('--ADD_DELAY', action='store_true', default=False)
 parser.add_argument('--DELAY_TYPE', type=str, default="Real")
 parser.add_argument('--ADD_NOISE', action='store_true', default=False)
@@ -62,7 +62,7 @@ parser.add_argument('--NOISE_TYPE', type=str, default="Real")
 # DATASET
 parser.add_argument('--DATASET',
                     type=str,
-                    default="ReelToReel_Dataset_Mini_CHOWTAPE")
+                    default="ReelToReel_Dataset_MiniPulse100_CHOWTAPE")
 parser.add_argument('--SUBSET', type=str, default="Val")
 parser.add_argument('--FRACTION', type=float, default=1.0)
 parser.add_argument('--SEGMENT_LENGTH', type=int, default=None)

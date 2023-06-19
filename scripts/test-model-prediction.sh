@@ -19,7 +19,7 @@ NUM_EXAMPLES=2
 if [ $EXPERIMENT == "TOY" ]; then # CHOWTAPE
     # DATASET_NAME="ReelToReel_Dataset_MiniPulse100_CHOWTAPE" # EXP-1
     # declare -a ARR_WEIGHTS=(
-    # "GRU-HS[64]-DS[ReelToReel_Dataset_Mini_CHOWTAPE]"
+    # "GRU-HS[64]-DS[ReelToReel_Dataset_MiniPulse100_CHOWTAPE]"
     # )
     declare -a ARR_INDICES=(16 40 70 77 109)  # cherry-picked indices
     DATASET_NAME="ReelToReel_Dataset_MiniPulse100_CHOWTAPE_WOWFLUTTER" # EXP-2

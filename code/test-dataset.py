@@ -39,7 +39,7 @@ parser = argparse.ArgumentParser()
 # DATASET
 parser.add_argument('--DATASET',
                     type=str,
-                    default="ReelToReel_Dataset_Mini_CHOWTAPE")
+                    default="ReelToReel_Dataset_MiniPulse100_CHOWTAPE")
 parser.add_argument('--SUBSET', type=str, default="Train")
 parser.add_argument('--INPUT_ONLY', action='store_true', default=False)
 parser.add_argument('--FRACTION', type=float, default=1.0)

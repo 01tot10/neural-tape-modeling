@@ -27,9 +27,9 @@ declare -a ARR_SUBSETS=(
 
 if [ $EXPERIMENT == "TOY" ]; then # CHOWTAPE
     # declare -a ARR_WEIGHTS=(
-    # "$MODEL-HS[64]-L[$LOSS]-DS[ReelToReel_Dataset_Mini_CHOWTAPE]_1"
-    # "$MODEL-HS[64]-L[$LOSS]-DS[ReelToReel_Dataset_Mini_CHOWTAPE]_2"
-    # "$MODEL-HS[64]-L[$LOSS]-DS[ReelToReel_Dataset_Mini_CHOWTAPE]_3"
+    # "$MODEL-HS[64]-L[$LOSS]-DS[ReelToReel_Dataset_MiniPulse100_CHOWTAPE]_1"
+    # "$MODEL-HS[64]-L[$LOSS]-DS[ReelToReel_Dataset_MiniPulse100_CHOWTAPE]_2"
+    # "$MODEL-HS[64]-L[$LOSS]-DS[ReelToReel_Dataset_MiniPulse100_CHOWTAPE]_3"
     # ) # EXP1
     declare -a ARR_WEIGHTS=(
         "$MODEL-HS[64]-L[$LOSS]-DS[ReelToReel_Dataset_MiniPulse100_CHOWTAPE_WOWFLUTTER]_BEST"

@@ -25,10 +25,10 @@ if [ $EXPERIMENT == "TOY" ]; then # CHOWTAPE
     if [ $TAPE == "EXP1" ]; then # EXP-1
         DATASET_NAME="SinesFadedShortContinuousPulse100CherryPicked_CHOWTAPE" # EXP-1
         declare -a ARR_WEIGHTS=(
-            # "$MODEL-HS[64]-L[$LOSS]-DS[ReelToReel_Dataset_Mini_CHOWTAPE]_BEST"
-            "$MODEL-HS[64]-L[$LOSS]-DS[ReelToReel_Dataset_Mini_CHOWTAPE]_1"
-            "$MODEL-HS[64]-L[$LOSS]-DS[ReelToReel_Dataset_Mini_CHOWTAPE]_2"
-            "$MODEL-HS[64]-L[$LOSS]-DS[ReelToReel_Dataset_Mini_CHOWTAPE]_3"
+            # "$MODEL-HS[64]-L[$LOSS]-DS[ReelToReel_Dataset_MiniPulse100_CHOWTAPE]_BEST"
+            "$MODEL-HS[64]-L[$LOSS]-DS[ReelToReel_Dataset_MiniPulse100_CHOWTAPE]_1"
+            "$MODEL-HS[64]-L[$LOSS]-DS[ReelToReel_Dataset_MiniPulse100_CHOWTAPE]_2"
+            "$MODEL-HS[64]-L[$LOSS]-DS[ReelToReel_Dataset_MiniPulse100_CHOWTAPE]_3"
         )
     else
         DATASET_NAME="SinesFadedShortContinuousPulse100CherryPicked_CHOWTAPE_WOWFLUTTER" # EXP-2
