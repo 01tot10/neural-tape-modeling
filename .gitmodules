@@ -1,0 +1,15 @@
+[submodule "code/AnalogTapeModel"]
+	path = code/AnalogTapeModel
+	url = https://github.com/jatinchowdhury18/AnalogTapeModel.git
+[submodule "code/micro_tcn"]
+	path = code/micro_tcn
+	url = https://github.com/csteinmetz1/micro-tcn
+[submodule "code/Automated_GuitarAmpModelling"]
+	path = code/Automated_GuitarAmpModelling
+	url = https://github.com/Alec-Wright/Automated-GuitarAmpModelling
+[submodule "code/GreyBoxDRC"]
+	path = code/GreyBoxDRC
+	url = git@github.com:01tot10/GreyBoxDRC.git
+[submodule "code/auraloss"]
+	path = code/auraloss
+	url = git@github.com:csteinmetz1/auraloss.git
