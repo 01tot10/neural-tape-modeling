@@ -5,18 +5,16 @@
 This repository contains the code for the research article:
 
 ```
-“Neural Modeling Of Magnetic Tape Recorders,”
+O. Mikkonen, A. Wright, E. Moliner and V. Välimäki, “Neural Modeling Of Magnetic Tape Recorders,”
 in Proceedings of the International Conference on Digital Audio Effects (DAFx),
 Copenhagen, Denmark, 4-7 September 2023.
 ```
-<!-- [![Demo](https://img.shields.io/badge/Web-Demo-blue)](https://csteinmetz1.github.io/DeepAFx-ST)
-[![arXiv](https://img.shields.io/badge/arXiv-2207.08759-b31b1b.svg)](https://arxiv.org/abs/2207.08759) -->
 
 The pre-print of the article can be found from [here](https://arxiv.org/abs/2305.16862).<br>
 The accompanying web page can be found from [here](http://research.spa.aalto.fi/publications/papers/dafx23-neural-tape/).<br>
 The datasets can be found from [here](http://www.zenodo.org).
 
-![alt text](./reel-to-reel.png?raw=true)
+![System block diagram](./reel-to-reel.png?raw=true)
 
 </div>
 
