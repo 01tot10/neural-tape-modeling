@@ -1,0 +1,3 @@
+#### MATPLOTLIBRC FORMAT
+
+axes.prop_cycle: cycler('color', ['darkgrey', 'red', 'green', 'orange', 'grey',])

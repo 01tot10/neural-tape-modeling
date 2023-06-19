@@ -1,0 +1,11 @@
+[TYPECHECK]
+generated-members=torch.*
+
+[MASTER]
+disable=consider-using-f-string
+
+[BASIC]
+good-names=x, y, z, fs, fs_OS, t, i, GRU
+
+[MESSAGES CONTROL]
+disable=W0622, R1725, C0103
