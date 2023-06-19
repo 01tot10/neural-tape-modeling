@@ -1,6 +1,6 @@
 #testing (demos)
 network:
-  checkpoint:            "../experiments/91/trajectories-41000.pt"
+  checkpoint:            "../weights/91/trajectories-41000.pt"
   name:                  "unet_1d"
   callable:              "networks.unet_1d.UNet1D"
 

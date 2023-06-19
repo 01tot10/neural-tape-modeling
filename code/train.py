@@ -81,7 +81,7 @@ SEGMENT_LENGTH = args.SEGMENT_LENGTH
 PRELOAD = args.PRELOAD
 
 # Model
-MODEL_PATH = "../models/"
+MODEL_PATH = "../weights/"
 MODEL = args.MODEL
 INPUT_SIZE = 1
 OUTPUT_SIZE = 1

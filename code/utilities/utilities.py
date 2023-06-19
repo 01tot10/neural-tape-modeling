@@ -143,7 +143,7 @@ class Prettyfier:
 
 class DelayAnalyzer:
 
-    def __init__(self, data_dir, subset="train", wiggle=False):
+    def __init__(self, data_dir, subset="train", wiggle=True):
         """
         Analyze and store delay trajectories based on input/output pulse train measurements.
         Reconstructs missing pulses if not found.
@@ -457,7 +457,7 @@ class DelayAnalyzer:
 
         return output_demod
 
-    def _get_pulse_indices(self, signal, rel_threshold=0.25, prominence=0.1):
+    def _get_pulse_indices(self, signal, rel_threshold=0.01, prominence=0.05):
         """
         Find indices of pulses from a pulse train. 
         Reconstructs missing pulses based on median pulse period.
@@ -498,9 +498,9 @@ class DelayAnalyzer:
             first_idx = scipy.signal.find_peaks(np.pad(
                 np.clip(signal.flatten(), a_min=0, a_max=None), (1, 1),
                 'minimum'),
-                                                height=np.max(signal) * 0.25,
+                                                height=np.max(signal) * 0.01,
                                                 distance=DISTANCE,
-                                                prominence=0.1,
+                                                prominence=0.01,
                                                 width=WIDTH)[0][0]
             first_idx = first_idx - 1
 

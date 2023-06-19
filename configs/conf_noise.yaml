@@ -1,6 +1,6 @@
 # Testing (demos)
 network:
-  checkpoint:           "../experiments/83/noise-73000.pt"
+  checkpoint:           "../weights/83/noise-73000.pt"
   name:                 "unet_1d"
   callable:             "networks.unet_1d.UNet1D"
   Nin:                  1 #two would mean stereo

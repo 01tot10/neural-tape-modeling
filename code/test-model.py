@@ -118,7 +118,7 @@ COMPUTE_LOSS = args.COMPUTE_LOSS
 DATASET_NOISE = args.DATASET_NOISE
 
 # Model
-MODEL_PATH = "../models/"
+MODEL_PATH = "../weights/"
 MODEL = args.MODEL
 WEIGHTS = args.WEIGHTS
 INPUT_SIZE = 1
