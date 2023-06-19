@@ -1,0 +1,51 @@
+
+#testing (demos)
+network:
+  checkpoint:            "../experiments/90/toytrajectories-36000.pt"
+  name:                  "unet_1d"
+  callable:              "networks.unet_1d.UNet1D"
+
+  #two would mean stereo
+  Nin:                   1
+  depth:                 4
+  Ns:                    [8, 16,16,16,16, 16]
+  Ss:                    [2,2,4,4,4]
+
+  emb_dim:               16
+  num_bottleneck_layers: 1
+
+  use_norm:              False
+
+exp:
+  sample_rate:           100 #sample rate where the generator works
+  out_sample_rate:       44100 #sample rate at which we work
+  seg_len:               512
+
+
+diff_params:
+  T:                     4 #number of time steps
+  #sigma_data:           1e-4
+  #sigma_min:            1e-5
+  #igma_max:             1e-3
+  sigma_data:            0.0068 #default for maestro
+  sigma_min:             1e-5
+  sigma_max:             0.5
+  Schurn:                0
+  Snoise:                1
+
+  ro:                    7
+
+outpainting:
+  overlap:               1 #in seconds
+
+
+hydra:
+  job:
+    config:
+      # configuration for the ${hydra.job.override_dirname} runtime variable
+      override_dirname:
+        kv_sep:          '='
+        item_sep:        ','
+        # Remove all paths, as the / in them would mess up things
+        exclude_keys:    ['path_experiment',
+          'hydra.job_logging.handles.file.filename']

@@ -1,0 +1,39 @@
+# Testing (demos)
+network:
+  checkpoint:           "../experiments/83/noise-73000.pt"
+  name:                 "unet_1d"
+  callable:             "networks.unet_1d.UNet1D"
+  Nin:                  1 #two would mean stereo
+  emb_dim:              32
+  depth:                6
+  Ns:                   [8,16,16,16,16,16,16,16,16]
+  Ss:                   [4,4,4,4,4,4,4,4,4]
+  use_norm:             False
+
+exp:
+  sample_rate:          44100 # sample rate where the generator works
+  out_sample_rate:      44100 # sample rate at which we work
+  seg_len:              65536
+
+diff_params:
+  T:                    16 # number of time steps
+  sigma_data:           8e-4
+  sigma_min:            5e-5
+  sigma_max:            0.1
+  ro:                   10
+  Schurn:               0.25
+  Snoise:               1.0000
+
+outpainting:
+  overlap:              0.2 #in seconds
+
+hydra:
+  job:
+    config:
+      # configuration for the ${hydra.job.override_dirname} runtime variable
+      override_dirname:
+        kv_sep:         '='
+        item_sep:       ','
+        # Remove all paths, as the / in them would mess up things
+        exclude_keys:   ['path_experiment',
+          'hydra.job_logging.handles.file.filename']
