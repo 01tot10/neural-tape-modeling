@@ -1,0 +1,26 @@
+name: neural-tape
+channels:
+  - nvidia
+  - pytorch
+  - conda-forge
+dependencies:
+  - pytorch
+  - pytorch-cuda=11.7
+  - torchvision
+  - torchaudio
+  - spyder-kernels
+  - ca-certificates
+  - certifi
+  - openssl
+  - matplotlib
+  - numpy
+  - scipy
+  - pysoundfile
+  - wandb
+  - yapf
+  - isort
+  - ffmpeg
+  - plotly
+  - natsort
+  - omegaconf
+  - beautysh
