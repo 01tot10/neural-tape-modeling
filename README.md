@@ -12,7 +12,7 @@ Copenhagen, Denmark, 4-7 September 2023.
 
 The pre-print of the article can be found from [here](https://arxiv.org/abs/2305.16862).<br>
 The accompanying web page can be found from [here](http://research.spa.aalto.fi/publications/papers/dafx23-neural-tape/).<br>
-The datasets can be found from [here](http://www.zenodo.org).
+The datasets can be found from [here](https://zenodo.org/record/8026272).
 
 ![System block diagram](./reel-to-reel.png?raw=true)
 
@@ -28,8 +28,8 @@ The datasets can be found from [here](http://www.zenodo.org).
 
 Clone the repository and submodules
 ```
-git clone [REPOSITORY]
-cd neural-tape-model
+git clone git@github.com:01tot10/neural-tape-modeling.git
+cd neural-tape-modeling
 git submodule init && git submodule update
 ```
 
@@ -38,10 +38,16 @@ Create the Python virtual environment with [mamba](https://mamba.readthedocs.io/
 mamba/conda env create --file environment.yaml
 ```
 
-Download and symlink the data to `audio/`
+Download data to symlinked location `audio/ -> ../neural-tape-audio/`
 ```
-wget -O neural-tape-audio.zip [ZENODO URL]
-unzip -d ../neural-tape-audio/ {file.zip}
+# create a directory for contents
+mkdir ../neural-tape-audio
+# download and extract toy data
+wget -P ../neural-tape-audio 'https://zenodo.org/record/8026272/files/neural-tape-audio_CHOWTAPE.tar'
+tar -xzvf ../neural-tape-audio/neural-tape-audio_CHOWTAPE.tar -C ../neural-tape-audio/
+# download and extract real data
+wget -P ../neural-tape-audio 'https://zenodo.org/record/8026272/files/neural-tape-audio_AKAI.tar'
+tar -xzvf ../neural-tape-audio/neural-tape-audio_AKAI.tar -C ../neural-tape-audio/
 ```
 
 Optional: To generate target audio with [CHOWTape](https://github.com/jatinchowdhury18/AnalogTapeModel), a VST instance of the plugin should be compiled. Check instructions in the corresponding repository.
