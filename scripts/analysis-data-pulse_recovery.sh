@@ -9,6 +9,7 @@ IPS=$3
 
 # SETTINGS
 SEGMENT_LENGTH=$((44100 / 2))  # SHORT
+# SEGMENT_LENGTH=$((192000 / 2)) # SHORT, HIRES
 # SEGMENT_LENGTH=441000 # LONG
 N_PARALLEL=1
 
@@ -18,9 +19,10 @@ if [ $EXPERIMENT == "TOY" ]; then # CHOWTAPE
   # DATASET_NAME="ReelToReel_Dataset_MiniPulse100_CHOWTAPE" # EXP1a
   DATASET_NAME="ReelToReel_Dataset_MiniPulse100_CHOWTAPE_WOWFLUTTER" # EXP1b
 else # REAL
-  DATASET_NAME="ReelToReel_Dataset_MiniPulse100_AKAI_IPS[$IPS]_$TAPE"
+  DATASET_NAME="ReelToReel_Dataset_MiniPulse100_AKAI_IPS[$IPS]_$TAPE"       # NORMAL
+  # DATASET_NAME="ReelToReel_Dataset_Mini192kHzPulse100_AKAI_IPS[$IPS]_$TAPE" # HIRES
 fi
-declare -a ARR_SUBSET=("Train" "Val" "Test")
+declare -a ARR_SUBSET=("Train")
 
 counter=0
 for subset in "${ARR_SUBSET[@]}"; do
@@ -28,7 +30,7 @@ for subset in "${ARR_SUBSET[@]}"; do
   --DATASET $DATASET_NAME --SUBSET $subset --PRELOAD\
   --SEGMENT_LENGTH $SEGMENT_LENGTH --NO_SHUFFLE --IDX 0 --ZOOM 0.5\
   --PLOT_DELAY\
-  --SAVE_FIG --DESCRIPTIVE_NAME $DESCRIPTIVE_NAME"_"$subset &
+  --SAVE_FIG --DESCRIPTIVE_NAME $DESCRIPTIVE_NAME"_"$subset
   
   ((counter+=1))
   if [ $counter -eq $(($N_PARALLEL)) ]; then
