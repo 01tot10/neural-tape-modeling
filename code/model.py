@@ -11,7 +11,6 @@ Created on Wed Jan 25 09:46:38 2023
 import numpy as np
 import torch
 import torchaudio
-
 from networks.unet_1d import UNet1D
 from utilities.utilities import nextpow2
 
@@ -264,8 +263,8 @@ class TimeVaryingDelayLine(torch.nn.Module):
         self.max_delay = max_delay
 
         # Initializations
-        # Buffer is initialised to batch size 1, must be initialised according to batch size
-        self.buffer = torch.zeros(1, channels, max_delay)
+        # Buffer is initialised to batch size 2, must be initialised according to batch size
+        self.buffer = torch.zeros(2, channels, max_delay)
 
     def forward(self, x, dt, warmup=False):
         """
@@ -324,11 +323,12 @@ class TimeVaryingDelayLine(torch.nn.Module):
         """ Detach buffer from computational graph """
         self.buffer = self.buffer.clone().detach()
 
-    def init_buffer(self, N):
+    def init_buffer(self, N, max_d):
         """ Init buffer with zeros
             Args:
                 N (int), mini-batch size"""
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.max_delay = max_d
         self.buffer = torch.zeros(N, 1, self.max_delay).to(device)
 
 
@@ -358,6 +358,7 @@ class DiffDelRNN(torch.nn.Module):
         self.hidden_size = hidden_size
         self.output_size = output_size
         self.skip = skip
+        self.max_delay = max_delay
 
         # Network
         self.GRU = torch.nn.GRU(input_size, hidden_size, batch_first=True)
@@ -366,12 +367,12 @@ class DiffDelRNN(torch.nn.Module):
         self.diffdel = TimeVaryingDelayLine(max_delay=max_delay)
 
         # Initializations
-        self.initialize_hidden(2)
+        self.initialize_hidden(2, max_delay)
 
-    def initialize_hidden(self, N):
-        """ Initialize GRU hidden state to zeros. """
+    def initialize_hidden(self, N, max_D):
+        """ Initialize GRU hidden state to zeros and initialise delay line buffer"""
         self.hidden = None
-        self.diffdel.init_buffer(N)
+        self.diffdel.init_buffer(N, int(max_D) + 1)
 
     def detach_hidden(self):
         """ Detach GRU hidden state from computational graph """
@@ -462,7 +463,7 @@ class DiffDelRNN(torch.nn.Module):
                 np.ceil((input.shape[-1] - TBPTT_INIT) // TBPTT_LEN))
 
             # Aggregate hidden state
-            self.initialize_hidden(input.shape[0])
+            self.initialize_hidden(input.shape[0], self.max_delay)
             _, __ = self.forward(input[:, :, :TBPTT_INIT],
                                  d_traj[:, :, :TBPTT_INIT],
                                  warmup=True)
@@ -551,7 +552,7 @@ class DiffDelRNN(torch.nn.Module):
                     np.ceil((input.shape[-1] - INIT_LEN) / TBPTT_LEN))
 
                 # Aggregate hidden state
-                self.initialize_hidden(input.shape[0])
+                self.initialize_hidden(input.shape[0], self.max_delay)
                 _, __ = self.forward(input[:, :, :INIT_LEN],
                                      d_traj[:, :, :INIT_LEN],
                                      warmup=True)
@@ -626,7 +627,7 @@ class DiffDelRNN(torch.nn.Module):
         output = torch.empty(input.shape).to(device)
         output_pre_d = torch.empty(input.shape).to(device)
 
-        self.initialize_hidden(input.shape[0])
+        self.initialize_hidden(input.shape[0], self.max_delay)
         self.warm_start()
 
         for idx_minibatch in range(num_minibatches):

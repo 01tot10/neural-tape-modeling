@@ -3,7 +3,7 @@
 """
 Created on Tue Jan 17 16:34:03 2023
 
-@author: 01tot10
+@author: 01tot10, Alec-Wright
 """
 
 #%% Imports
@@ -18,7 +18,6 @@ import soundfile as sf
 import torch
 import torchaudio
 from torch.utils.data import Dataset
-
 from utilities.utilities import DelayAnalyzer
 
 torchaudio.set_audio_backend("sox_io")
@@ -86,6 +85,8 @@ class VADataset(Dataset):
         self.sync = sync
         self.use_soundfile = use_soundfile
         self.return_full = return_full
+        self.max_d = torch.tensor(self.delay_analyzer.max_delay)
+        self.min_d = torch.tensor(self.delay_analyzer.min_delay)
 
         print("=" * 5, " Dataset ", "=" * 5)
         print(f"Using:          {os.path.basename(self.data_dir)}")

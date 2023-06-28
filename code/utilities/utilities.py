@@ -3,7 +3,7 @@
 """
 Created on Tue Jan 10 09:49:28 2023
 
-@author: 01tot10
+@author: 01tot10, Alec-Wright, eloimoliner
 """
 
 #%% Imports
@@ -13,11 +13,13 @@ import os
 import re
 import sys
 
-import matplotlib.pyplot as plt
 import numpy as np
 import scipy
 import soundfile as sf
+import torch
 import torchaudio
+from librosa.filters import mel as librosa_mel_fn
+from torch import nn
 
 #%% Classes
 
@@ -195,9 +197,10 @@ class DelayAnalyzer:
         if self.multi_channel:
             self.mean_delay = 0.0
             self.max_delay = 0.0
+            self.min_delay = 1e6
             self._init_trajectories()
             print(
-                f"Delay (mean, max)  ({'{:.0f}'.format(self.mean_delay * 1000)}, {'{:.0f}'.format(self.max_delay * 1000)}) ms"
+                f"Delay (min, mean, max)  ({'{:.0f}'.format(self.min_delay* 1000)}, {'{:.0f}'.format(self.mean_delay * 1000)}, {'{:.0f}'.format(self.max_delay * 1000)}) ms"
             )
         else:
             sys.stdout.write("Found mono files, no delay trajectory analysis!")
@@ -234,7 +237,7 @@ class DelayAnalyzer:
         self.fs = md.sample_rate
 
         # Test dimensionality
-        input, sr = self._load(self.input_files[0])
+        input, _ = self._load(self.input_files[0])
         target, _ = self._load(self.target_files[0])
 
         if target.shape[0] > 1 and target.shape[0] > 1:
@@ -289,12 +292,14 @@ class DelayAnalyzer:
                 self.mean_delay += np.mean(trajectory_dict["delay_trajectory"])
                 if np.max(trajectory_dict["delay_trajectory"]) > self.max_delay:
                     self.max_delay = np.max(trajectory_dict["delay_trajectory"])
+                if np.min(trajectory_dict["delay_trajectory"]) < self.min_delay:
+                    self.min_delay = np.min(trajectory_dict["delay_trajectory"])
 
             else: # Analyze and save
 
                 # Load audio
-                input, sr = self._load(ifile)
-                target, sr = self._load(tfile)
+                input, _ = self._load(ifile)
+                target, _ = self._load(tfile)
 
                 if target.shape[0] < 2 or target.shape[0] < 2:
                     raise RuntimeError("Input or output not multi-channel!")
@@ -317,6 +322,8 @@ class DelayAnalyzer:
                 self.mean_delay += np.mean(delay_trajectory)
                 if np.max(delay_trajectory) > self.max_delay:
                     self.max_delay = np.max(delay_trajectory)
+                if np.min(delay_trajectory) < self.min_delay:
+                    self.min_delay = np.min(delay_trajectory)
 
                 # Save to disk
                 trajectory_dict = {
@@ -538,8 +545,8 @@ class DelayAnalyzer:
 
             # get indices of problematic areas
             pulse_diffs = np.diff(pulse_indices)
-            problem_indices = np.where(pulse_diffs > MAX_REL_PERIOD *
-                                       pulse_period)[0]
+            problem_indices = np.where(
+                pulse_diffs > MAX_REL_PERIOD * pulse_period)[0]
 
             # reconstruct
             total_constructed = 0
@@ -566,8 +573,8 @@ class DelayAnalyzer:
 
                 # Update problematic areas
                 pulse_diffs = np.diff(pulse_indices)
-                problem_indices = np.where(pulse_diffs > MAX_REL_PERIOD *
-                                           pulse_period)[0]
+                problem_indices = np.where(
+                    pulse_diffs > MAX_REL_PERIOD * pulse_period)[0]
 
                 total_constructed += n_constructed
 
@@ -615,6 +622,54 @@ class DelayAnalyzer:
     def _load(self, filename):
         x, sr = sf.read(filename, always_2d=True)
         return x.T, sr
+
+
+class TimeFreqConverter(nn.Module):
+    """ Time-Frequency Converter """
+
+    def __init__(self,
+                 n_fft=2048,
+                 hop_length=512,
+                 win_length=2048,
+                 sampling_rate=44100,
+                 n_mel_channels=160,
+                 mel_fmin=0.0,
+                 mel_fmax=None):
+
+        super().__init__()
+
+        # Define Mel-basis
+        mel_basis = librosa_mel_fn(sr=sampling_rate,
+                                   n_fft=n_fft,
+                                   n_mels=n_mel_channels,
+                                   fmin=mel_fmin,
+                                   fmax=mel_fmax)
+        mel_basis = torch.from_numpy(mel_basis).float()
+        self.register_buffer("mel_basis", mel_basis)
+
+        # Windowing
+        window = torch.hann_window(win_length).float()
+        self.register_buffer("window", window)
+
+        # FFT Parameters
+        self.n_fft = n_fft
+        self.hop_length = hop_length
+        self.win_length = win_length
+        self.sampling_rate = sampling_rate
+        self.n_mel_channels = n_mel_channels
+        self.spectro = torchaudio.transforms.Spectrogram(n_fft=n_fft,
+                                                         hop_length=n_fft // 4)
+
+    def forward(self, audio, mel=False):
+        """ Forward. """
+
+        magnitude = self.spectro(audio).squeeze()
+
+        if mel:
+            mel_output = torch.matmul(self.mel_basis, magnitude)
+            return magnitude, mel_output
+        else:
+            return magnitude
 
 
 #%% Methods
@@ -860,4 +915,5 @@ def parse_loss(model_name):
 
 
 def nextpow2(number):
+    """ Compute next power of 2. """
     return 2**(number - 1).bit_length()
