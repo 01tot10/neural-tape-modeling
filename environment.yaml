@@ -19,6 +19,7 @@ dependencies:
   - wandb
   - yapf
   - isort
+  - pylint
   - ffmpeg
   - plotly
   - natsort
