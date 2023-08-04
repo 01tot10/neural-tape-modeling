@@ -1,55 +1,51 @@
-#testing (demos)
 train:
   optimizer:
-    type: "adam"
-    beta1: 0.9
-    beta2: 0.999
-    eps: 1e-8
-  lr: 2e-4
-  lr_rampup_it: 1000
-  scheduler_step_size: 10000
-  batch: 4
-  scheduler_gamma: 0.8
-  save_model: True
-  save_interval: 10000
-  resume: False
-  use_grad_clip: True
-  max_grad_norm: 1.0
-  ema_rampup: 1000
-  ema_rate: 0.999
-dset:
-  callable: "datasets.tapehiss.TapeHissdset"
-  path: "/scratch/elec/t412-asp/neural-tape-audio/ReelToReel_Dataset_Mini192kHzPulse100_AKAI_IPS[7.5]_MAXELL_TRAJECTORIES_SPLIT/Train"
-  fs: 192000
-  seg_len: 983040
-  num_workers: 2
+    type:                "adam"
+    beta1:               0.9
+    beta2:               0.999
+    eps:                 1e-8
+  lr:                    2e-4
+  lr_rampup_it:          1000
+  scheduler_step_size:   10000
+  batch:                 4
+  scheduler_gamma:       0.8
+  save_model:            True
+  save_interval:         10000
+  resume:                False
+  use_grad_clip:         True
+  max_grad_norm:         1.0
+  ema_rampup:            1000
+  ema_rate:              0.999
 
-model_dir:           "../weights/91"
+dset:
+  callable:              "datasets.tapehiss.TapeHissdset"
+  path:                  "/scratch/elec/t412-asp/neural-tape-audio/ReelToReel_Dataset_Mini192kHzPulse100_AKAI_IPS[7.5]_MAXELL_TRAJECTORIES_SPLIT/Train"
+  fs:                    192000
+  seg_len:               983040
+  num_workers:           2
+
+model_dir:               "../weights/91"
+
 network:
   checkpoint:            "../weights/91/trajectories-41000.pt"
   name:                  "unet_1d"
   callable:              "networks.unet_1d.UNet1D"
-
-  #two would mean stereo
-  Nin:                   1
+  Nin:                   1 # two would mean stereo
   depth:                 4
   Ns:                    [8, 16,16,16,16, 16]
   Ss:                    [2,2,4,4,4]
-
   emb_dim:               16
   num_bottleneck_layers: 1
-
   use_norm:              False
 
 exp:
-  exp_name: "trajectories"
-  sample_rate:           100 #sample rate where the generator works
-  out_sample_rate:       44100 #sample rate at which we work
+  exp_name:              "trajectories"
+  sample_rate:           100 # sample rate where the generator works
+  out_sample_rate:       44100 # sample rate at which we work
   seg_len:               512
 
-
 diff_params:
-  T:                     8 #number of time steps
+  T:                     8 # number of time steps
   sigma_data:            1e-4
   sigma_min:             1e-5
   sigma_max:             1e-2
@@ -58,8 +54,7 @@ diff_params:
   Snoise:                1
 
 outpainting:
-  overlap:               1 #in seconds
-
+  overlap:               1 # in seconds
 
 hydra:
   job:
