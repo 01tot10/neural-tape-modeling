@@ -1,33 +1,41 @@
-# Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-#
-# This work is licensed under a Creative Commons
-# Attribution-NonCommercial-ShareAlike 4.0 International License.
-# You should have received a copy of the license along with this
-# work. If not, see http://creativecommons.org/licenses/by-nc-sa/4.0/
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 
-"""Facilities for reporting and collecting training statistics across
+This work is licensed under a Creative Commons
+Attribution-NonCommercial-ShareAlike 4.0 International License.
+You should have received a copy of the license along with this
+work. If not, see http://creativecommons.org/licenses/by-nc-sa/4.0/
+
+Facilities for reporting and collecting training statistics across
 multiple processes and devices. The interface is designed to minimize
 synchronization overhead as well as the amount of boilerplate in user
-code."""
+code.
+
+@author: eloimoliner, 01tot10
+"""
+
+#%% Imports
 
 import re
 import numpy as np
 import torch
-import utilities.dnnlib as dnnlib
+from utilities import dnnlib
 
+#%% Facilities
 
-#----------------------------------------------------------------------------
+_num_moments = 3               # [num_scalars, sum_of_scalars, sum_of_squares]
+_reduce_dtype = torch.float32  # Data type to use for initial per-tensor reduction.
+_counter_dtype = torch.float64 # Data type to use for the internal counters.
+_rank = 0                      # Rank of the current process.
+_sync_device = None            # Device to use for multiprocess communication. None = single-process.
+_sync_called = False           # Has _sync() been called yet?
+_counters = {
+}                              # Running counters on each device, updated by report(): name => device => torch.Tensor
+_cumulative = {
+}                              # Cumulative counters on the CPU, updated by _sync(): name => torch.Tensor
 
-_num_moments    = 3             # [num_scalars, sum_of_scalars, sum_of_squares]
-_reduce_dtype   = torch.float32 # Data type to use for initial per-tensor reduction.
-_counter_dtype  = torch.float64 # Data type to use for the internal counters.
-_rank           = 0             # Rank of the current process.
-_sync_device    = None          # Device to use for multiprocess communication. None = single-process.
-_sync_called    = False         # Has _sync() been called yet?
-_counters       = dict()        # Running counters on each device, updated by report(): name => device => torch.Tensor
-_cumulative     = dict()        # Cumulative counters on the CPU, updated by _sync(): name => torch.Tensor
-
-#----------------------------------------------------------------------------
 
 def init_multiprocessing(rank, sync_device):
     r"""Initializes `torch_utils.training_stats` for collecting statistics
@@ -48,7 +56,6 @@ def init_multiprocessing(rank, sync_device):
     _rank = rank
     _sync_device = sync_device
 
-#----------------------------------------------------------------------------
 
 def report(name, value):
     r"""Broadcasts the given set of scalars to all interested instances of
@@ -74,7 +81,7 @@ def report(name, value):
         The same `value` that was passed in.
     """
     if name not in _counters:
-        _counters[name] = dict()
+        _counters[name] = {}
 
     elems = torch.as_tensor(value)
     if elems.numel() == 0:
@@ -95,7 +102,6 @@ def report(name, value):
     _counters[name][device].add_(moments)
     return value
 
-#----------------------------------------------------------------------------
 
 def report0(name, value):
     r"""Broadcasts the given set of scalars by the first process (`rank = 0`),
@@ -105,7 +111,6 @@ def report0(name, value):
     report(name, value if _rank == 0 else [])
     return value
 
-#----------------------------------------------------------------------------
 
 class Collector:
     r"""Collects the scalars broadcasted by `report()` and `report0()` and
@@ -127,11 +132,12 @@ class Collector:
                         scalars were collected on a given round
                         (default: True).
     """
+
     def __init__(self, regex='.*', keep_previous=True):
         self._regex = re.compile(regex)
         self._keep_previous = keep_previous
-        self._cumulative = dict()
-        self._moments = dict()
+        self._cumulative = {}
+        self._moments = {}
         self.update()
         self._moments.clear()
 
@@ -158,7 +164,8 @@ class Collector:
             self._moments.clear()
         for name, cumulative in _sync(self.names()):
             if name not in self._cumulative:
-                self._cumulative[name] = torch.zeros([_num_moments], dtype=_counter_dtype)
+                self._cumulative[name] = torch.zeros([_num_moments],
+                                                     dtype=_counter_dtype)
             delta = cumulative - self._cumulative[name]
             self._cumulative[name].copy_(cumulative)
             if float(delta[0]) != 0:
@@ -171,7 +178,8 @@ class Collector:
         """
         assert self._regex.fullmatch(name)
         if name not in self._moments:
-            self._moments[name] = torch.zeros([_num_moments], dtype=_counter_dtype)
+            self._moments[name] = torch.zeros([_num_moments],
+                                              dtype=_counter_dtype)
         return self._moments[name]
 
     def num(self, name):
@@ -217,7 +225,9 @@ class Collector:
         """
         stats = dnnlib.EasyDict()
         for name in self.names():
-            stats[name] = dnnlib.EasyDict(num=self.num(name), mean=self.mean(name), std=self.std(name))
+            stats[name] = dnnlib.EasyDict(num=self.num(name),
+                                          mean=self.mean(name),
+                                          std=self.std(name))
         return stats
 
     def __getitem__(self, name):
@@ -226,7 +236,6 @@ class Collector:
         """
         return self.mean(name)
 
-#----------------------------------------------------------------------------
 
 def _sync(names):
     r"""Synchronize the global cumulative counters across devices and
@@ -256,15 +265,14 @@ def _sync(names):
     deltas = deltas.cpu()
     for idx, name in enumerate(names):
         if name not in _cumulative:
-            _cumulative[name] = torch.zeros([_num_moments], dtype=_counter_dtype)
+            _cumulative[name] = torch.zeros([_num_moments],
+                                            dtype=_counter_dtype)
         _cumulative[name].add_(deltas[idx])
 
     # Return name-value pairs.
     return [(name, _cumulative[name]) for name in names]
 
-#----------------------------------------------------------------------------
-# Convenience.
+
+#%% Convenience.
 
 default_collector = Collector()
-
-#----------------------------------------------------------------------------
