@@ -17,5 +17,5 @@
 	path = code/edm
 	url = git@github.com:01tot10/edm.git
 [submodule "code/k-diffusion"]
-	path = code/k-diffusion
+	path = code/k_diffusion
 	url = git@github.com:crowsonkb/k-diffusion.git
