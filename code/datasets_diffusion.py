@@ -51,7 +51,7 @@ class TapeHissdset(torch.utils.data.IterableDataset):
             file = self.train_samples[num]
             data, samplerate = sf.read(file)
 
-            assert (samplerate == self.fs, "wrong sampling rate")
+            assert samplerate == self.fs, "wrong sampling rate"
             data_clean = data
 
             # stereo to mono
@@ -159,7 +159,7 @@ class ToyTrajectories(torch.utils.data.IterableDataset):
             num = random.randint(0, len(self.train_samples) - 1)
             file = self.train_samples[num]
             data, samplerate = sf.read(file)
-            assert (samplerate == self.fs, "wrong sampling rate")
+            assert samplerate == self.fs, "wrong sampling rate"
             data_clean = data
 
             # stereo to mono

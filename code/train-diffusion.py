@@ -1,15 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Copyright (c) 2022, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-
-This work is licensed under a Creative Commons
-Attribution-NonCommercial-ShareAlike 4.0 International License.
-You should have received a copy of the license along with this
-work. If not, see http://creativecommons.org/licenses/by-nc-sa/4.0/
-
-Train diffusion-based generative model using the techniques described in the
-paper "Elucidating the Design Space of Diffusion-Based Generative Models"
+Train diffusion-based generative model using the techniques described in:
+  Karras, Tero, Miika Aittala, Timo Aila, and Samuli Laine.
+  “Elucidating the Design Space of Diffusion-Based Generative Models.”,
+  36th Conference on Neural Information Processing Systems (NeurIPS), 2022
 
 @author: eloimoliner, 01tot10
 """
@@ -27,10 +22,9 @@ from glob import glob
 import numpy as np
 import torch
 import torchaudio
-
-from utilities import training_stats
 import utilities.training_utils as t_utils
 from datasets_diffusion import TapeHissdset, ToyTrajectories
+from edm.torch_utils import training_stats
 from networks.unet_1d import UNet1D
 from omegaconf import OmegaConf
 
@@ -445,7 +439,9 @@ class Trainer():
             # Update sta
             self.it += 1
 
+
 #%% Main
+
 
 def _main(args, mode):
     """
@@ -514,6 +510,7 @@ def main():
     args = OmegaConf.load(config_path)
 
     _main(args, pags.MODE)
+
 
 if __name__ == "__main__":
     main()
