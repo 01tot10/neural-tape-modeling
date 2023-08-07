@@ -19,7 +19,7 @@ train:
 
 dset:
   callable:              "datasets.tapehiss.TapeHissdset"
-  path:                  "/scratch/elec/t412-asp/neural-tape-audio/ReelToReel_Dataset_Mini192kHzPulse100_AKAI_IPS[7.5]_MAXELL_TRAJECTORIES_SPLIT/Train"
+  path:                  "../audio/ReelToReel_Dataset_Mini192kHzPulse100_AKAI_IPS[7.5]_MAXELL_TRAJECTORIES_SPLIT/Train"
   fs:                    192000
   seg_len:               983040
   num_workers:           2
