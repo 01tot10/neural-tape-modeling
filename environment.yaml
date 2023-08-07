@@ -26,3 +26,4 @@ dependencies:
   - omegaconf
   - beautysh
   - librosa
+  - hydra-core
