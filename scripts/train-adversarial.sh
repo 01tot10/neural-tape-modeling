@@ -15,4 +15,4 @@ fi
 # NADA
 
 # Run
-python -u ../code/trainAdversarial.py
+python -u ../code/train-adversarial.py

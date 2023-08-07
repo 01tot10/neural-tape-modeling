@@ -1,43 +1,60 @@
+train:
+  optimizer:
+    type:                "adam"
+    beta1:               0.9
+    beta2:               0.999
+    eps:                 1e-8
+  lr:                    2e-4
+  lr_rampup_it:          1000
+  scheduler_step_size:   10000
+  batch:                 4
+  scheduler_gamma:       0.8
+  save_model:            True
+  save_interval:         10000
+  resume:                False
+  use_grad_clip:         True
+  max_grad_norm:         1.0
+  ema_rampup:            1000
+  ema_rate:              0.999
 
-#testing (demos)
+dset:
+  callable:              "datasets.tapehiss.TapeHissdset"
+  path:                  "../audio/ReelToReel_Dataset_MiniPulse100_CHOWTAPE_F[0.6]_SL[60]_TRAJECTORIES/Train"
+  fs:                    44100
+  seg_len:               225792
+  num_workers:           2
+
+model_dir:               "../weights/90"
+
 network:
   checkpoint:            "../weights/90/toytrajectories-36000.pt"
   name:                  "unet_1d"
   callable:              "networks.unet_1d.UNet1D"
-
-  #two would mean stereo
-  Nin:                   1
+  Nin:                   1 # two would mean stereo
   depth:                 4
   Ns:                    [8, 16,16,16,16, 16]
   Ss:                    [2,2,4,4,4]
-
   emb_dim:               16
   num_bottleneck_layers: 1
-
   use_norm:              False
 
 exp:
-  sample_rate:           100 #sample rate where the generator works
-  out_sample_rate:       44100 #sample rate at which we work
+  exp_name:              "toytrajectories"
+  sample_rate:           100 # sample rate where the generator works
+  out_sample_rate:       44100 # sample rate at which we work
   seg_len:               512
 
-
 diff_params:
-  T:                     4 #number of time steps
-  #sigma_data:           1e-4
-  #sigma_min:            1e-5
-  #igma_max:             1e-3
-  sigma_data:            0.0068 #default for maestro
+  T:                     4 # number of time steps
+  sigma_data:            0.0068 # default for maestro
   sigma_min:             1e-5
   sigma_max:             0.5
   Schurn:                0
   Snoise:                1
-
   ro:                    7
 
 outpainting:
-  overlap:               1 #in seconds
-
+  overlap:               1 # in seconds
 
 hydra:
   job:

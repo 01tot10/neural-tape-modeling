@@ -13,3 +13,6 @@
 [submodule "code/auraloss"]
 	path = code/auraloss
 	url = git@github.com:csteinmetz1/auraloss.git
+[submodule "code/edm"]
+	path = code/edm
+	url = git@github.com:01tot10/edm.git

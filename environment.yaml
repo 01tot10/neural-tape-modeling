@@ -19,9 +19,11 @@ dependencies:
   - wandb
   - yapf
   - isort
+  - pylint
   - ffmpeg
   - plotly
   - natsort
   - omegaconf
   - beautysh
   - librosa
+  - hydra-core

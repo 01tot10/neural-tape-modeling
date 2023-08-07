@@ -1,2 +1,5 @@
 # python
 __pycache__/
+
+# spyder
+.spyproject
