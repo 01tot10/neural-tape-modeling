@@ -6,12 +6,8 @@
 
 #%% Imports
 
-import numpy as np
-import scipy.signal
 import torch
 import torchaudio
-from auraloss.auraloss.perceptual import FIRFilter
-from k_diffusion.k_diffusion.utils import EMAWarmup
 
 #%% Methods
 
@@ -26,21 +22,21 @@ def resample_batch(audio, fs, fs_target, length_target=None):
     if fs_target == 22050:
         if (fs == 44100).all():
             audio = torchaudio.functional.resample(audio, 2, 1)
-            return audio[:, 0:length_target]  # throw away the last samples
+            return audio[:, 0:length_target] # throw away the last samples
         elif (fs == 48000).all():
-            
+
             # approximate resampleint
             audio = torchaudio.functional.resample(audio, 160 * 2, 147)
             return audio[:, 0:length_target]
         else:
-            
+
             # if revious is unsuccesful bccause we have examples at 441000 and
             # 48000 in the same batch,, just iterate over the batch
             proc_batch = torch.zeros((B, length_target), device=device)
             for i, (a, f_s) in enumerate(zip(
                     audio, fs)):              # I hope this will not slow down everything
                 if f_s == 44100:
-                    
+
                     # resample by 2
                     a = torchaudio.functional.resample(a, 2, 1)
                 elif f_s == 48000:
@@ -52,14 +48,14 @@ def resample_batch(audio, fs, fs_target, length_target=None):
             return proc_batch
     elif fs_target == 44100:
         if (fs == 44100).all():
-            return audio[:, 0:length_target]  # throw away the last samples
+            return audio[:, 0:length_target] # throw away the last samples
         elif (fs == 48000).all():
-            
+
             # approximate resampleint
             audio = torchaudio.functional.resample(audio, 160, 147)
             return audio[:, 0:length_target]
         else:
-            
+
             # if previous is unsuccesful because we have examples at 441000 and
             # 48000 in the same batch, just iterate over the batch
             B, C, L = audio.shape
@@ -68,7 +64,7 @@ def resample_batch(audio, fs, fs_target, length_target=None):
                     audio,
                     fs.tolist())):            # I hope this will not slow down everything
                 if f_s == 44100:
-                    
+
                     # resample by 2
                     pass
                 elif f_s == 22050:
@@ -86,20 +82,20 @@ def resample_batch(audio, fs, fs_target, length_target=None):
             return audio[..., 0:length_target] # throw away the last samples
         elif (fs == 48000).all():
             print("resampling 48000 to 16000", length_target, audio.shape)
-            
+
             # approximate resampleint
             audio = torchaudio.functional.resample(audio, 48000, fs_target)
             print(audio.shape)
             return audio[..., 0:length_target]
         else:
-            
+
             # if previous is unsuccesful because we have examples at 441000 and
             # 48000 in the same batch, just iterate over the batch
             proc_batch = torch.zeros((B, length_target), device=device)
             for i, (a, f_s) in enumerate(zip(
-                    audio, fs)):               # I hope this will not slow down everything
+                    audio, fs)):              # I hope this will not slow down everything
                 if f_s == 44100:
-                    
+
                     # resample by 2
                     a = torchaudio.functional.resample(a, 44100, fs_target)
                 elif f_s == 48000:
