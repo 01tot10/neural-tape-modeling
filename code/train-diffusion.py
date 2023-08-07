@@ -294,7 +294,8 @@ class Trainer():
                 try:
                     self.it = checkpoint['it']
                 except:
-                    self.it = 157007                                  #large number to mean that we loaded somethin, but it is arbitrary
+                    # large number to mean that we loaded somethin, but it is arbitrary
+                    self.it = 157007
                 return self.load_state_dict(checkpoint)
             except Exception as e:
                 print("Could not resume from checkpoint")
@@ -307,7 +308,8 @@ class Trainer():
                 print("trying to load a project checkpoint")
                 print("checkpoint_id", checkpoint_id)
                 if checkpoint_id is None:
-                                                                      # find latest checkpoint_id
+
+                    # find latest checkpoint_id
                     save_basename = f"{self.args.exp.exp_name}-*.pt"
                     save_name = f"{self.args.model_dir}/{save_basename}"
                     print(save_name)
@@ -328,7 +330,8 @@ class Trainer():
                 try:
                     self.it = checkpoint['it']
                 except:
-                    self.it = 159000 #large number to mean that we loaded somethin, but it is arbitrary
+                    # large number to mean that we loaded somethin, but it is arbitrary
+                    self.it = 159000
                 self.load_state_dict(checkpoint)
                 return True
             except Exception as e:
